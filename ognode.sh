@@ -89,14 +89,14 @@ echo -e "${GREEN}Private key loaded successfully.${NC}"
 
 # Download environment file
 echo -e "${YELLOW}Downloading environment file...${NC}"
-wget -q -O "/home/codespace/0genvfile.env" https://raw.githubusercontent.com/CryptonodesHindi/Automated_script/refs/heads/main/0genvfile.env
+wget -q -O "$HOME/0genvfile.env" https://raw.githubusercontent.com/CryptonodesHindi/Automated_script/refs/heads/main/0genvfile.env
 
 # Inject private key into the environment file
-sed -i "s|COMBINED_SERVER_PRIVATE_KEY=YOUR_PRIVATE_KEY|COMBINED_SERVER_PRIVATE_KEY=$YOUR_PRIVATE_KEY|" "/home/codespace/0genvfile.env"
+sed -i "s|COMBINED_SERVER_PRIVATE_KEY=YOUR_PRIVATE_KEY|COMBINED_SERVER_PRIVATE_KEY=$YOUR_PRIVATE_KEY|" "$HOME/0genvfile.env"
 
 # Run Docker container
 echo -e "${YELLOW}Starting Docker container...${NC}"
-docker run -d --env-file "/home/codespace/0genvfile.env" --name 0g-da-client -v ./run:/runtime -p 51001:51001 rohan014233/0g-da-client combined
+docker run -d --env-file /home/codespace/0genvfile.env --name 0g-da-client -v ./run:/runtime -p 51001:51001 rohan014233/0g-da-client combined
 
 # Display completion message
 echo "========================================"

@@ -96,7 +96,7 @@ sed -i "s|COMBINED_SERVER_PRIVATE_KEY=YOUR_PRIVATE_KEY|COMBINED_SERVER_PRIVATE_K
 
 # Run Docker container
 echo -e "${YELLOW}Starting Docker container...${NC}"
-docker run -d --env-file /home/codespace/0genvfile.env --name 0g-da-client -v ./run:/runtime -p 51001:51001 rohan014233/0g-da-client combined
+docker run -d --env-file /root/0genvfile.env --name 0g-da-client -v ./run:/runtime -p 51001:51001 rohan014233/0g-da-client combined
 
 # Display completion message
 echo "========================================"

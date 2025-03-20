@@ -55,10 +55,10 @@ echo -e "${INFO}Using predefined MAC address: $MAC_ADDRESS${NC}"
 echo -e "${INFO}Pulling the prebuilt Docker image 'rohan014233/alliance_games:latest'...${NC}"
 docker pull rohan014233/alliance_games:latest
 
-# Step 4: Run the Docker container
-echo -e "${INFO}Running the Docker container '${DEVICE_NAME}'...${NC}"
-docker run -it --rm --mac-address="$MAC_ADDRESS" \
+# Step 4: Run the Docker container in detached mode
+echo -e "${INFO}Running the Docker container '${DEVICE_NAME}' in detached mode...${NC}"
+docker run -d --mac-address="$MAC_ADDRESS" \
     -v "$fake_product_uuid_file:/sys/class/dmi/id/product_uuid" \
     --name="$DEVICE_NAME" rohan014233/alliance_games:latest
 
-echo -e "${SUCCESS}Docker container '${DEVICE_NAME}' has been successfully started.${NC}"
+echo -e "${SUCCESS}Docker container '${DEVICE_NAME}' has been successfully started in detached mode.${NC}"

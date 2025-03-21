@@ -6,8 +6,6 @@ set -o pipefail  # Prevent errors in piped commands from being masked
 # Step 1: Install Gaianet Node
 curl -sSfL 'https://github.com/GaiaNet-AI/gaianet-node/releases/latest/download/install.sh' | bash
 
-# Step 2: Reload bash configuration
-source ~/.bashrc
 
 # Step 3: Remove default nodeid.json and replace with new one
 NODEID_PATH="/root/gaianet/nodeid.json"
@@ -42,6 +40,9 @@ else
     echo "frpc.env file not found! Exiting..."
     exit 1
 fi
+
+# Step 2: Reload bash configuration
+source ~/.bashrc
 
 # Step 4: Initialize Gaianet with specific config
 gaianet init --config https://raw.githubusercontent.com/GaiaNet-AI/node-configs/main/qwen2-0.5b-instruct/config.json

@@ -40,7 +40,7 @@ services:
       - PGID=1000
       - TZ=Asia/Kolkata
     ports:
-      - "8080:3000"
+      - "8085:3000"
     security_opt:
       - seccomp:unconfined
     volumes:

@@ -18,21 +18,36 @@ load_device_identifiers() {
     # Source the file
     source "$env_file"
 
-    # Validate required variables
-    if [[ -z "$MAC_ADDRESS" || -z "$UUID" || -z "$USER_DID" || -z "$DEVICE_ID" || -z "$DEVICE_NAME" ]]; then
-        echo -e "${ERROR}Error: Missing required variables in $env_file.${NC}"
+    # Validate MAC_ADDRESS, UUID, USER_DID, DEVICE_ID, and DEVICE_NAME
+    if [[ -z "$MAC_ADDRESS" ]]; then
+        echo -e "${ERROR}Error: MAC_ADDRESS is not defined in $env_file.${NC}"
+        exit 1
+    fi
+    if [[ -z "$UUID" ]]; then
+        echo -e "${ERROR}Error: UUID is not defined in $env_file.${NC}"
+        exit 1
+    fi
+    if [[ -z "$USER_DID" ]]; then
+        echo -e "${ERROR}Error: USER_DID is not defined in $env_file.${NC}"
+        exit 1
+    fi
+    if [[ -z "$DEVICE_ID" ]]; then
+        echo -e "${ERROR}Error: DEVICE_ID is not defined in $env_file.${NC}"
+        exit 1
+    fi
+    if [[ -z "$DEVICE_NAME" ]]; then
+        echo -e "${ERROR}Error: DEVICE_NAME is not defined in $env_file.${NC}"
         exit 1
     fi
 
-    echo -e "${INFO}Loaded device-specific identifiers:${NC}"
-    echo -e "${INFO}MAC_ADDRESS: $MAC_ADDRESS${NC}"
-    echo -e "${INFO}UUID: $UUID${NC}"
-    echo -e "${INFO}USER_DID: $USER_DID${NC}"
-    echo -e "${INFO}DEVICE_ID: $DEVICE_ID${NC}"
-    echo -e "${INFO}DEVICE_NAME: $DEVICE_NAME${NC}"
+    echo -e "${INFO}Loaded MAC_ADDRESS: $MAC_ADDRESS${NC}"
+    echo -e "${INFO}Loaded UUID: $UUID${NC}"
+    echo -e "${INFO}Loaded USER_DID: $USER_DID${NC}"
+    echo -e "${INFO}Loaded DEVICE_ID: $DEVICE_ID${NC}"
+    echo -e "${INFO}Loaded DEVICE_NAME: $DEVICE_NAME${NC}"
 }
 
-# Load device identifiers
+# Load identifiers
 load_device_identifiers
 
 # Create a directory for this device's configuration
@@ -42,23 +57,37 @@ if [ ! -d "$device_dir" ]; then
     echo -e "${INFO}Created directory for $DEVICE_NAME at $device_dir${NC}"
 fi
 
-# Step 1: Write the UUID to a file
+# Step 1: Create the Dockerfile
+echo -e "${INFO}Creating the Dockerfile...${NC}"
+cat << EOL > "$device_dir/Dockerfile"
+FROM ubuntu:latest
+WORKDIR /app
+RUN apt-get update && apt-get install -y bash curl jq make gcc bzip2 lbzip2 vim git lz4 telnet build-essential net-tools wget tcpdump systemd dbus iptables iproute2 nano
+RUN curl -L https://github.com/Impa-Ventures/coa-launch-binaries/raw/main/linux/amd64/compute/launcher -o launcher && \
+    curl -L https://github.com/Impa-Ventures/coa-launch-binaries/raw/main/linux/amd64/compute/worker -o worker
+RUN chmod +x ./launcher && chmod +x ./worker
+
+# Run the launcher command and keep the container alive
+CMD ./launcher --user_did=$USER_DID --device_id=$DEVICE_ID --device_name=$DEVICE_NAME && tail -f /dev/null
+EOL
+
+# Step 4: Write the UUID to a file
 fake_product_uuid_file="$device_dir/fake_uuid.txt"
 if [ ! -f "$fake_product_uuid_file" ]; then
     echo "$UUID" > "$fake_product_uuid_file"
 fi
 
-# Step 2: Use the predefined MAC address
+# Step 5: Use the provided MAC address
 echo -e "${INFO}Using predefined MAC address: $MAC_ADDRESS${NC}"
 
-# Step 3: Pull the prebuilt Docker image instead of building it
-echo -e "${INFO}Pulling the prebuilt Docker image 'rohan014233/alliance_games:latest'...${NC}"
-docker pull rohan014233/alliance_games:latest
+# Convert device_name to lowercase for the Docker image name
+device_name_lower=$(echo "$DEVICE_NAME" | tr '[:upper:]' '[:lower:]')
 
-# Step 4: Run the Docker container in detached mode
-echo -e "${INFO}Running the Docker container '${DEVICE_NAME}' in detached mode...${NC}"
-docker run -d --mac-address="$MAC_ADDRESS" \
-    -v "$fake_product_uuid_file:/sys/class/dmi/id/product_uuid" \
-    --name="$DEVICE_NAME" rohan014233/alliance_games:latest
+# Step 6: Build the Docker image specific to this device
+echo -e "${INFO}Building the Docker image 'alliance_games_docker_$device_name_lower'...${NC}"
+docker build -t "alliance_games_docker_$device_name_lower" "$device_dir"
 
-echo -e "${SUCCESS}Docker container '${DEVICE_NAME}' has been successfully started in detached mode.${NC}"
+echo -e "${SUCCESS}Congratulations! The Docker container '${DEVICE_NAME}' has been successfully set up with predefined identifiers.${NC}"
+
+# Step 7: Run the Docker container
+docker run -it --mac-address="$MAC_ADDRESS" -v "$fake_product_uuid_file:/sys/class/dmi/id/product_uuid" --name="$DEVICE_NAME" "alliance_games_docker_$device_name_lower"

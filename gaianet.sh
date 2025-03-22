@@ -1,13 +1,25 @@
 #!/bin/bash
 
-set -e  # Exit immediately if a command exits with a non-zero status
-set -o pipefail  # Prevent errors in piped commands from being masked
+set -e
+set -o pipefail
 
 # Step 1: Install Gaianet Node
 curl -sSfL 'https://github.com/GaiaNet-AI/gaianet-node/releases/latest/download/install.sh' | bash
 
+# Step 2: Ensure Gaianet path is available
+echo "Adding Gaianet to PATH..."
+export PATH=$PATH:/root/gaianet/bin
+echo 'export PATH=$PATH:/root/gaianet/bin' >> ~/.bashrc
+source ~/.bashrc
+hash -r
 
-# Step 3: Remove default nodeid.json and replace with new one
+# Check if Gaianet is available
+if ! command -v gaianet &> /dev/null; then
+    echo "🚨 Error: 'gaianet' command not found! Manually check with 'which gaianet'"
+    exit 1
+fi
+
+# Step 3: Remove and replace nodeid.json
 NODEID_PATH="/root/gaianet/nodeid.json"
 NID_ENV="$(pwd)/nid.env"
 
@@ -24,7 +36,7 @@ else
     exit 1
 fi
 
-# Step 3: Remove default frpc.toml and replace with new one
+# Step 4: Remove and replace frpc.toml
 FRPC_PATH="/root/gaianet/gaia-frp/frpc.toml"
 FRPC_ENV="$(pwd)/frpc.env"
 
@@ -41,13 +53,12 @@ else
     exit 1
 fi
 
-# Step 2: Reload bash configuration
-source ~/.bashrc
-
-# Step 4: Initialize Gaianet with specific config
+# Step 5: Initialize Gaianet
+echo "Initializing Gaianet..."
 gaianet init --config https://raw.githubusercontent.com/GaiaNet-AI/node-configs/main/qwen2-0.5b-instruct/config.json
 
-# Step 5: Start Gaianet
+# Step 6: Start Gaianet
+echo "Starting Gaianet..."
 gaianet start
 
-echo "Gaianet setup completed successfully!"
+echo "✅ Gaianet setup completed successfully!"

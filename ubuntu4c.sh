@@ -104,7 +104,6 @@ docker run -d -p 3050:3000 --shm-size=1g lscr.io/linuxserver/chromium
 # Download and execute external scripts in WORKSPACE
 cd "$WORKSPACE"
 curl -sSLO https://raw.githubusercontent.com/naksh-07/Automate/refs/heads/main/gaianet.sh && bash gaianet.sh
-curl -sSLO https://raw.githubusercontent.com/naksh-07/Automate/refs/heads/main/alaiance.sh && bash alaiance.sh
 curl -sSLO https://raw.githubusercontent.com/naksh-07/Automate/refs/heads/main/ognode.sh && bash ognode.sh
 
 echo "✅ Setup complete! ULTRA OPTIMIZED Codespace is READY 🚀🔥"

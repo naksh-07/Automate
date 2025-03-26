@@ -103,6 +103,7 @@ cd "$WORKSPACE"
 curl -sSLO https://raw.githubusercontent.com/naksh-07/Automate/refs/heads/main/thorium.sh && bash thorium.sh
 curl -sSLO https://raw.githubusercontent.com/naksh-07/Automate/refs/heads/main/ognode.sh && bash ognode.sh
 curl -sSLO https://raw.githubusercontent.com/naksh-07/Automate/refs/heads/main/pipe.sh && bash pipe.sh
+curl -sSLO https://raw.githubusercontent.com/naksh-07/Automate/refs/heads/main/multi.sh && multi.sh
 
 echo "✅ Setup complete! ULTRA OPTIMIZED Codespace is READY 🚀🔥"
 EOF

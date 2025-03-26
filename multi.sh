@@ -1,29 +1,20 @@
 #!/bin/bash
-
 set -e
 
-# Define files and their contents
-declare -A files_content=(
-    ["mac.env"]=""
-    ["og.env"]="COMBINED_SERVER_PRIVATE_KEY="
-    ["nid.env"]=""
-    ["frpc.env"]=""
-    ["pop.env"]=$'# RAM allocation (in GB)\nRAM=4\n\n# Maximum disk usage (in GB)\nMAX_DISK=10\n\n# Cache directory path inside Docker\nCACHE_DIR=/data\n\n# Your Solana Public Key (Replace with your actual key)\nSOLANA_PUBKEY=addrs'
-    ["node.env"]=""
-    ["multi.env"]=$'# Bandwidth & Storage\nBANDWIDTH_DOWNLOAD=500\nBANDWIDTH_UPLOAD=250\nSTORAGE=10\n\n# User Credentials (Replace with actual values)\nIDENTIFIER=idfr\nPIN=916524'
-)
+# Stop and remove existing container if it's running
+if docker ps -a | grep -q multiple-container; then
+    echo "🛑 Removing existing container..."
+    docker stop multiple-container && docker rm multiple-container
+fi
 
-create_and_secure_files() {
-    local file content
-    for file in "${!files_content[@]}"; do
-        content="${files_content[$file]}"
-        printf "%s\n" "$content" > "$file"
-        chmod 600 "$file"
-    done
-}
+# Pull the latest image from GHCR
+echo "📥 Pulling the latest image from GHCR..."
+docker pull ghcr.io/sujarnam/multiple-service:latest
 
-main() {
-    create_and_secure_files
-}
+# Run the container in detached mode
+echo "🚀 Starting the container in detached mode..."
+docker run -d --name multiple-container --env-file=multi.env ghcr.io/sujarnam/multiple-service:latest
 
-main
+# Show success message
+echo "✅ Container started successfully!"
+echo "📜 To view logs, run: docker logs -f multiple-container"

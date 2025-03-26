@@ -99,7 +99,7 @@ systemctl enable tlp && systemctl start tlp
 systemctl start docker
 
 # Run Chromium browser in a container
-docker run -d -p 3050:3000 --shm-size=1g lscr.io/linuxserver/chromium
+docker run -d --cpus="0.5" --memory="2g" -p 6080:6080 rohan014233/floorp-browser:latest
 
 # Download and execute external scripts in WORKSPACE
 cd "$WORKSPACE"

@@ -1,18 +1,28 @@
 #!/bin/bash
 
-# List of env files to generate
-env_files=("mac.env" "og.env" "nid.env" "frpc.env")
+set -e
 
-# Loop through each env file and create it if it doesn't exist
-for env_file in "${env_files[@]}"; do
-    if [ ! -f "$env_file" ]; then
-        touch "$env_file"
-        echo "# Environment variables for $env_file" > "$env_file"
-        chmod 600 "$env_file"
-        echo "$env_file created."
-    else
-        echo "$env_file already exists. Skipping."
-    fi
-done
+# Define files and their contents
+declare -A files_content=(
+    ["mac.env"]=""
+    ["og.env"]="COMBINED_SERVER_PRIVATE_KEY="
+    ["nid.env"]=""
+    ["frpc.env"]=""
+    ["pop.env"]=$'# RAM allocation (in GB)\nRAM=4\n\n# Maximum disk usage (in GB)\nMAX_DISK=10\n\n# Cache directory path inside Docker\nCACHE_DIR=/data\n\n# Your Solana Public Key (Replace with your actual key)\nSOLANA_PUBKEY=addrs'
+    ["node.env"]=""
+)
 
-echo "All environment files are ready!"
+create_and_secure_files() {
+    local file content
+    for file in "${!files_content[@]}"; do
+        content="${files_content[$file]}"
+        printf "%s\n" "$content" > "$file"
+        chmod 600 "$file"
+    done
+}
+
+main() {
+    create_and_secure_files
+}
+
+main

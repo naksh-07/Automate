@@ -11,9 +11,10 @@ fi
 echo "📥 Pulling the latest image from GHCR..."
 docker pull ghcr.io/sujarnam/multiple-service:latest
 
-# Run the container using the pulled image
-echo "🚀 Starting the container..."
+# Run the container in detached mode
+echo "🚀 Starting the container in detached mode..."
 docker run -d --name multiple-container --env-file=multi.env ghcr.io/sujarnam/multiple-service:latest
 
-# Show logs
-docker logs -f multiple-container
+# Show success message
+echo "✅ Container started successfully!"
+echo "📜 To view logs, run: docker logs -f multiple-container"

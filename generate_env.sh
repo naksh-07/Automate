@@ -1,4 +1,3 @@
-
 set -e
 
 # Define files and their contents

@@ -1,24 +1,49 @@
 #!/bin/bash
-set -e
 
-# Define the image
-IMAGE="ghcr.io/sujarnam/multiple-service:latest"
-CONTAINER_NAME="multiple-container"
-ENV_FILE="multi.env"
+# Define repository URL
+REPO_URL="https://github.com/mahraarinuu/MultipleDocker.git"
 
-# Stop and remove existing container if it exists
-if docker ps -a | grep -q $CONTAINER_NAME; then
-    echo "Removing existing container..."
-    docker stop $CONTAINER_NAME && docker rm $CONTAINER_NAME
+# Get the directory where the script is running
+TARGET_DIR="$(pwd)/MultipleDocker"
+
+# Check if directory exists
+if [ -d "$TARGET_DIR" ]; then
+    echo "Directory $TARGET_DIR already exists. Pulling latest changes..."
+    cd "$TARGET_DIR" && git pull origin main
+else
+    # Clone the repository in the current directory
+    git clone "$REPO_URL" "$TARGET_DIR"
+    if [ $? -ne 0 ]; then
+        echo "Error: Failed to clone repository. Exiting."
+        exit 1
+    fi
 fi
 
-# Pull the latest image
-echo "Pulling the latest image from GHCR..."
-docker pull $IMAGE
+# Navigate to the cloned repository
+cd "$TARGET_DIR" || {
+    echo "Error: Failed to change directory. Exiting."
+    exit 1
+}
 
-# Run the container with the environment file
-echo "Starting the container..."
-docker run -d --name $CONTAINER_NAME --env-file=$ENV_FILE $IMAGE
+# Remove default multi.env
+rm -f multi.env
 
-# Check logs
-docker logs -f $CONTAINER_NAME
+# Copy new multi.env from the script execution directory
+if [ -f "../nmulti.env" ]; then
+    cp "../nmulti.env" "multi.env"
+else
+    echo "Error: nmulti.env not found in the parent directory. Exiting."
+    exit 1
+fi
+
+# Give execution permissions to all shell scripts inside the repo
+chmod +x *.sh
+
+# Run run.sh
+./run.sh
+if [ $? -ne 0 ]; then
+    echo "Error: Failed to execute run.sh. Exiting."
+    exit 1
+fi
+
+echo "Script executed successfully."

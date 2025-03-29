@@ -1,13 +1,11 @@
-```md
 # 🚀 Soundness Docker Image  
 
 This Docker image provides a **pre-configured environment** for **Soundness CLI**, along with **Rust and Cargo**.  
 
----
-
 ## 🔹 Quick Start  
 
-### 🏗 Run the Container  
+### 🏗 Run the Container
+
 ```console
 docker run -it rohan014233/soundness:latest
 ```

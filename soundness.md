@@ -1,6 +1,3 @@
-
----
-
 ```md
 # 🚀 Soundness Docker Image  
 
@@ -54,5 +51,3 @@ This Docker setup provides a **reproducible** and **hassle-free** environment to
 docker run -it rohan014233/soundness:latest
 ```
 ```
-
----

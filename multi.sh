@@ -1,19 +1,24 @@
 #!/bin/bash
 set -e
 
-# Stop and remove existing container
-if docker ps -a | grep -q multiple-container; then
+# Define the image
+IMAGE="ghcr.io/sujarnam/multiple-service:v1.1"
+CONTAINER_NAME="multiple-container"
+ENV_FILE="multi.env"
+
+# Stop and remove existing container if it exists
+if docker ps -a | grep -q $CONTAINER_NAME; then
     echo "Removing existing container..."
-    docker stop multiple-container && docker rm multiple-container
+    docker stop $CONTAINER_NAME && docker rm $CONTAINER_NAME
 fi
 
-# Build the Docker image
-echo "Building Docker image..."
-docker build -t multiple-service .
+# Pull the latest image
+echo "Pulling the latest image from GHCR..."
+docker pull $IMAGE
 
 # Run the container with the environment file
 echo "Starting the container..."
-docker run -d --name multiple-container --env-file=multi.env multiple-service
+docker run -d --name $CONTAINER_NAME --env-file=$ENV_FILE $IMAGE
 
 # Check logs
-docker logs -f multiple-container
+docker logs -f $CONTAINER_NAME

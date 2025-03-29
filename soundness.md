@@ -8,22 +8,37 @@ This Docker image provides a pre-configured environment for **Soundness CLI**, a
 
 Follow these simple steps to use **Soundness CLI** inside the Docker container:  
 
-### 1️⃣ Run the Container  
+### Run the Container  
 
+```console
 docker run -it rohan014233/soundness:latest
+```
 
-2️⃣ Generate a New Key
 
+```console
 soundness-cli generate-key --name my-key
+```
 
-3️⃣ Export the Key
+Importing a Key Pair
+To import an existing key pair from a mnemonic phrase:
 
+```console
+soundness-cli import-key --name my-key
+```
 
-soundness-cli export-key --name my-key
-4️⃣ List All Keys
+Listing Key Pairs
+To view all stored key pairs and their associated public keys:
 
-
+```console
 soundness-cli list-keys
+```
+
+Exporting Key Mnemonic
+To export the mnemonic phrase for a stored key pair:
+
+```console
+soundness-cli export-key --name my-key
+```
 
 📦 About the Project
 This project provides a pre-configured and reproducible environment for working with Soundness CLI in Docker.

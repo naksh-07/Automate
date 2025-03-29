@@ -13,18 +13,13 @@ Follow these simple steps to use **Soundness CLI** inside the Docker container:
 docker run -it rohan014233/soundness:latest
 2️⃣ Generate a New Key
 sh
-Copy
-Edit
 soundness-cli generate-key --name my-key
 3️⃣ Export the Key
 sh
-Copy
-Edit
+
 soundness-cli export-key --name my-key
 4️⃣ List All Keys
 sh
-Copy
-Edit
 soundness-cli list-keys
 📦 About the Project
 This project provides a pre-configured and reproducible environment for working with Soundness CLI in Docker.

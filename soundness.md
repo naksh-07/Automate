@@ -1,14 +1,14 @@
-# **Soundness Docker Image** 🚀  
+# Soundness Docker Image 🚀  
 
 This Docker image provides a pre-configured environment for **Soundness CLI**, along with **Rust and Cargo**.  
 
 ---
 
-## **🔹 Quick Start: Using the Image**  
+## 🔹 Quick Start: Using the Image  
 
 Follow these simple steps to use **Soundness CLI** inside the Docker container:  
 
-### **1️⃣ Run the Container**  
+### 1️⃣ Run the Container  
 ```sh
 docker run -it rohan014233/soundness:latest
 2️⃣ Generate a New Key
@@ -37,4 +37,3 @@ This project provides a pre-configured and reproducible environment for working 
 🔨 Soundness CLI installed and verified
 
 🏗 Configured PATH environment to access binaries easily
-

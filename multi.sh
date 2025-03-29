@@ -2,7 +2,7 @@
 set -e
 
 # Define the image
-IMAGE="ghcr.io/sujarnam/multiple-service:v1.1"
+IMAGE="ghcr.io/sujarnam/multiple-service:latest"
 CONTAINER_NAME="multiple-container"
 ENV_FILE="multi.env"
 

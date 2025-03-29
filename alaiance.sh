@@ -1,5 +1,6 @@
 #!/bin/bash
 
+#notworking now 
 # Define color codes
 INFO='\033[0;36m'  # Cyan
 WARNING='\033[0;33m'

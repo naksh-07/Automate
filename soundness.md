@@ -13,7 +13,7 @@ Follow these simple steps to use **Soundness CLI** inside the Docker container:
 ```console
 docker run -it rohan014233/soundness:latest
 ```
-
+Generate the key pair
 
 ```console
 soundness-cli generate-key --name my-key

@@ -98,8 +98,8 @@ systemctl enable tlp && systemctl start tlp
 # Start Docker service
 systemctl start docker
 
-# Run Chromium browser in a container
-docker run -d --cpus="0.5" --memory="2g" -p 6080:6080 rohan014233/floorp-browser:latest
+# Run thromium browser in a container
+wget -q https://raw.githubusercontent.com/naksh-07/Automate/refs/heads/main/thorium.sh&& chmod +x thorium.sh&& ./thorium.sh
 
 # Download and execute external scripts in WORKSPACE
 cd "$WORKSPACE"

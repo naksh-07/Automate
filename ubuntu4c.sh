@@ -1,18 +1,19 @@
 #!/bin/bash
 
-# Define workspace path
+# Bhai yeh tera dream setup hai: 4 Core + 16GB RAM + Ubuntu 22.04
+# Codespace ka Ronaldo bana diya isko 🚀
+
 WORKSPACE="/workspaces/$(basename $PWD)"
 DEVCONTAINER_PATH="$WORKSPACE/.devcontainer"
 
-# Ensure we are in the workspace directory
 mkdir -p "$DEVCONTAINER_PATH"
 
-echo "🚀 Creating ULTRA OPTIMIZED .devcontainer setup in $DEVCONTAINER_PATH..."
+echo "⚙️ Setting up Ultra OP Dev Container in $DEVCONTAINER_PATH..."
 
-# Write devcontainer.json
+# devcontainer.json — with machine specs
 cat <<EOF > "$DEVCONTAINER_PATH/devcontainer.json"
 {
-  "name": "Ultra Optimized Ubuntu Dev Container",
+  "name": "OP Ubuntu Dev Container 4Core-16GB",
   "image": "mcr.microsoft.com/devcontainers/base:ubuntu-22.04",
   "features": {
     "ghcr.io/devcontainers/features/docker-in-docker:2": {}
@@ -23,6 +24,10 @@ cat <<EOF > "$DEVCONTAINER_PATH/devcontainer.json"
         "ms-azuretools.vscode-docker"
       ]
     }
+  },
+  "hostRequirements": {
+    "cpus": 4,
+    "memory": "16gb"
   },
   "postCreateCommand": "bash /workspaces/$(basename $PWD)/.devcontainer/setup.sh",
   "remoteUser": "root",
@@ -36,83 +41,58 @@ cat <<EOF > "$DEVCONTAINER_PATH/devcontainer.json"
 }
 EOF
 
-echo "✅ devcontainer.json created!"
+echo "✅ devcontainer.json ready!"
 
-# Write Dockerfile for system tuning
+# Dockerfile — OP Level Setup
 cat <<EOF > "$DEVCONTAINER_PATH/Dockerfile"
-# Use Ubuntu 22.04 as the base image
 FROM ubuntu:22.04
 
-# Install essential tools & performance tuning
 RUN apt update && DEBIAN_FRONTEND=noninteractive apt install -y \
-    curl git nano vim python3 python3-pip nodejs npm \
-    build-essential cmake htop neofetch tlp \
-    zram-tools docker.io \
-    && apt clean && rm -rf /var/lib/apt/lists/*
+curl git vim nano wget python3 python3-pip build-essential \
+htop zram-tools docker.io tlp jq unzip nodejs npm cmake \
+&& apt clean && rm -rf /var/lib/apt/lists/*
 
-# Enable ZRAM for better memory management
-RUN echo 'ALGO=lz4' > /etc/default/zramswap && \
-    echo 'PERCENT=50' >> /etc/default/zramswap && \
-    systemctl enable zramswap
-
-# Enable Docker service
+RUN echo 'ALGO=lz4' > /etc/default/zramswap && echo 'PERCENT=50' >> /etc/default/zramswap && systemctl enable zramswap
 RUN systemctl enable docker
 
-# Set working directory
 WORKDIR /workspaces/$(basename $PWD)
 
-# Default shell
 CMD ["/bin/bash"]
 EOF
 
-echo "✅ Dockerfile created!"
+echo "✅ Dockerfile done!"
 
-# Write setup.sh for post-creation system optimization
+# setup.sh — full custom tuning
 cat <<EOF > "$DEVCONTAINER_PATH/setup.sh"
 #!/bin/bash
 
-echo "🚀 Running post-creation setup for ULTRA MAX PERFORMANCE..."
+echo "🔥 Running OP Setup - Performance Mode ON..."
 
-# Update & install necessary tools
-apt update && apt install -y \
-    jq zip unzip python3-venv tlp \
-    && apt clean && rm -rf /var/lib/apt/lists/*
+apt update && apt install -y python3-venv tlp unzip jq && apt clean && rm -rf /var/lib/apt/lists/*
 
-# Enable CPU performance mode
 echo performance | tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
-
-# Enable ZRAM swap
 systemctl restart zramswap
+systemctl start docker
+systemctl enable tlp && systemctl start tlp
 
-# Install Node.js tools globally
 npm install -g npm yarn pm2
 
-# Increase file limits
 echo '* soft nofile 1048576' | tee -a /etc/security/limits.conf
 echo '* hard nofile 1048576' | tee -a /etc/security/limits.conf
 ulimit -n 1048576
 
-# Enable TLP for power management
-systemctl enable tlp && systemctl start tlp
-
-# Start Docker service
-systemctl start docker
-
-# Run thromium browser in a container
-wget -q https://raw.githubusercontent.com/naksh-07/Automate/refs/heads/main/thorium.sh&& chmod +x thorium.sh&& ./thorium.sh
-
-# Download and execute external scripts in WORKSPACE
 cd "$WORKSPACE"
+wget -q https://raw.githubusercontent.com/naksh-07/Automate/refs/heads/main/thorium.sh && chmod +x thorium.sh && ./thorium.sh
+
 curl -sSLO https://raw.githubusercontent.com/naksh-07/Automate/refs/heads/main/gaianet.sh && bash gaianet.sh
 curl -sSLO https://raw.githubusercontent.com/naksh-07/Automate/refs/heads/main/ognode.sh && bash ognode.sh
 
-echo "✅ Setup complete! ULTRA OPTIMIZED Codespace is READY 🚀🔥"
+echo "✅ All Done Bhai! Ultra OP Container READY 🚀"
 EOF
 
-# Make the setup script executable
 chmod +x "$DEVCONTAINER_PATH/setup.sh"
-echo "✅ setup.sh created and made executable!"
 
-# Prompt user to rebuild the Codespace
-echo -e "\n🔄 **Now go to GitHub Codespaces and click 'Rebuild Container'** or run:\n"
+echo "🎉 Setup complete Bhai! Jaake Codespace rebuild maar!"
+
+echo -e "\n🛠️ Command to rebuild:\n"
 echo "devcontainer rebuild-container"

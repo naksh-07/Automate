@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Colors for output
+YELLOW='\033[1;33m'
+GREEN='\033[1;32m'
+RED='\033[1;31m'
+NC='\033[0m' # No Color
+
 # Update package lists and upgrade installed packages
 echo -e "${YELLOW}Updating and upgrading system packages...${NC}"
 sudo apt update -y
@@ -75,7 +81,7 @@ fi
 echo -e "${YELLOW}Pulling Docker image rohan014233/0g-da-client...${NC}"
 docker pull rohan014233/0g-da-client
 
-# Load private key from environment variable (set via Codespace secret)
+# Load private key from Codespace secret
 if [ -z "$COMBINED_SERVER_PRIVATE_KEY" ]; then
     echo -e "${RED}Environment variable COMBINED_SERVER_PRIVATE_KEY is not set! Make sure it's defined in Codespace secrets.${NC}"
     exit 1
@@ -84,19 +90,18 @@ else
     YOUR_PRIVATE_KEY=$COMBINED_SERVER_PRIVATE_KEY
 fi
 
-
 echo -e "${GREEN}Private key loaded successfully.${NC}"
 
 # Download environment file
 echo -e "${YELLOW}Downloading environment file...${NC}"
-wget -q -O "$HOME/0genvfile.env" https://raw.githubusercontent.com/CryptonodesHindi/Automated_script/refs/heads/main/0genvfile.env
+wget -q -O "./0genvfile.env" https://raw.githubusercontent.com/CryptonodesHindi/Automated_script/refs/heads/main/0genvfile.env
 
 # Inject private key into the environment file
-sed -i "s|COMBINED_SERVER_PRIVATE_KEY=YOUR_PRIVATE_KEY|COMBINED_SERVER_PRIVATE_KEY=$YOUR_PRIVATE_KEY|" "$HOME/0genvfile.env"
+sed -i "s|COMBINED_SERVER_PRIVATE_KEY=YOUR_PRIVATE_KEY|COMBINED_SERVER_PRIVATE_KEY=$YOUR_PRIVATE_KEY|" "./0genvfile.env"
 
 # Run Docker container
 echo -e "${YELLOW}Starting Docker container...${NC}"
-docker run -d --env-file /root/0genvfile.env --name 0g-da-client -v ./run:/runtime -p 51001:51001 rohan014233/0g-da-client combined
+docker run -d --env-file ./0genvfile.env --name 0g-da-client -v ./run:/runtime -p 51001:51001 rohan014233/0g-da-client combined
 
 # Display completion message
 echo "========================================"

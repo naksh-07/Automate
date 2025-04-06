@@ -75,15 +75,15 @@ fi
 echo -e "${YELLOW}Pulling Docker image rohan014233/0g-da-client...${NC}"
 docker pull rohan014233/0g-da-client
 
-# Load private key from og.env
-if [ -f "./og.env" ]; then
-    echo -e "${YELLOW}Loading private key from og.env...${NC}"
-    source ./og.env
-    YOUR_PRIVATE_KEY=$COMBINED_SERVER_PRIVATE_KEY
-else
-    echo -e "${RED}og.env file not found! Exiting...${NC}"
+# Load private key from environment variable (set via Codespace secret)
+if [ -z "$COMBINED_SERVER_PRIVATE_KEY" ]; then
+    echo -e "${RED}Environment variable COMBINED_SERVER_PRIVATE_KEY is not set! Make sure it's defined in Codespace secrets.${NC}"
     exit 1
+else
+    echo -e "${YELLOW}Loaded private key from Codespace secret.${NC}"
+    YOUR_PRIVATE_KEY=$COMBINED_SERVER_PRIVATE_KEY
 fi
+
 
 echo -e "${GREEN}Private key loaded successfully.${NC}"
 

@@ -38,12 +38,15 @@ docker rm -f "$DOCKER_CONTAINER" 2>/dev/null
 echo "Pulling latest Docker image from Docker Hub..."
 docker pull "$DOCKER_IMAGE"
 
-# Run the Docker container (Mounting pop.env & node_info.json)
+# Run the Docker container (Mounting pop.env & node_info.json, exposing ports)
 echo "Running Docker container..."
 docker run -d --name "$DOCKER_CONTAINER" \
   -v "$(pwd)/$CACHE_DIR:/data" \
   -v "$(pwd)/$POP_ENV_FILE:/app/pop.env" \
   -v "$(pwd)/$NODE_INFO_FILE:/app/node_info.json" \
+  -p 80:80 \
+  -p 443:443 \
+  -p 8003:8003 \
   --restart unless-stopped \
   "$DOCKER_IMAGE"
 

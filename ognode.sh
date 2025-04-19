@@ -1,109 +1,98 @@
 #!/bin/bash
 
-# Colors for output
+# =========================================
+# COLORS
+# =========================================
 YELLOW='\033[1;33m'
 GREEN='\033[1;32m'
 RED='\033[1;31m'
 NC='\033[0m' # No Color
 
-# Update package lists and upgrade installed packages
-echo -e "${YELLOW}Updating and upgrading system packages...${NC}"
-sudo apt update -y
-
-# Install Screen if not installed
-if ! command -v screen &> /dev/null; then
-    echo -e "${YELLOW}Installing Screen...${NC}"
-    sudo apt install -y screen
+# =========================================
+# LOAD og.env SECRETS
+# =========================================
+if [[ -f "og.env" ]]; then
+    echo -e "${YELLOW}🔐 Loading secrets from og.env...${NC}"
+    set -o allexport
+    source og.env
+    set +o allexport
 else
-    echo -e "${YELLOW}Screen is already installed, skipping installation.${NC}"
+    echo -e "${RED}❌ og.env file not found! Please add it to the current directory.${NC}"
+    exit 1
 fi
 
-# Install Git if not installed
-if ! command -v git &> /dev/null; then
-    echo -e "${YELLOW}Installing Git...${NC}"
-    sudo apt install -y git
-else
-    echo -e "${YELLOW}Git is already installed, skipping installation.${NC}"
-fi
-
-# Check if Docker is installed
-if ! command -v docker &> /dev/null; then
-    echo -e "${YELLOW}Installing Docker and dependencies...${NC}"
-    sudo apt install -y \
-        apt-transport-https \
-        ca-certificates \
-        curl \
-        software-properties-common \
-        lsb-release \
-        gnupg2
-
-    echo -e "${YELLOW}Adding Docker's official GPG key...${NC}"
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-
-    echo -e "${YELLOW}Adding Docker repository...${NC}"
-    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-
-    sudo apt update -y
-    sudo apt install -y docker-ce docker-ce-cli containerd.io
-
-    if ! command -v docker &> /dev/null; then
-        echo -e "${RED}Docker installation failed!${NC}"
-        exit 1
-    else
-        echo -e "${GREEN}Docker successfully installed!${NC}"
-    fi
-else
-    echo -e "${YELLOW}Docker is already installed, skipping installation.${NC}"
-fi
-
-# Check if Docker Compose is installed
-if ! command -v docker-compose &> /dev/null; then
-    echo -e "${YELLOW}Installing Docker Compose...${NC}"
-    VER=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep tag_name | cut -d '"' -f 4)
-    curl -L "https://github.com/docker/compose/releases/download/$VER/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-    chmod +x /usr/local/bin/docker-compose
-    echo -e "${GREEN}Docker Compose installed!${NC}"
-else
-    echo -e "${YELLOW}Docker Compose is already installed, skipping installation.${NC}"
-fi
-
-# Add current user to Docker group
-if ! groups $USER | grep -q '\bdocker\b'; then
-    echo -e "${YELLOW}Adding user to Docker group...${NC}"
-    sudo groupadd docker
-    sudo usermod -aG docker $USER
-    echo -e "${GREEN}Please log out and log back in for changes to take effect.${NC}"
-else
-    echo -e "${YELLOW}User is already in the Docker group.${NC}"
-fi
-
-# Pull Docker image
-echo -e "${YELLOW}Pulling Docker image rohan014233/0g-da-client...${NC}"
-docker pull rohan014233/0g-da-client
-
-# Load private key from Codespace secret
+# =========================================
+# CHECK PRIVATE KEY VALUE
+# =========================================
 if [ -z "$COMBINED_SERVER_PRIVATE_KEY" ]; then
-    echo -e "${RED}Environment variable COMBINED_SERVER_PRIVATE_KEY is not set! Make sure it's defined in Codespace secrets.${NC}"
+    echo -e "${RED}❌ COMBINED_SERVER_PRIVATE_KEY not set in og.env!${NC}"
     exit 1
 else
-    echo -e "${YELLOW}Loaded private key from Codespace secret.${NC}"
+    echo -e "${GREEN}✅ Private key loaded successfully from og.env.${NC}"
     YOUR_PRIVATE_KEY=$COMBINED_SERVER_PRIVATE_KEY
 fi
 
-echo -e "${GREEN}Private key loaded successfully.${NC}"
+# =========================================
+# SYSTEM SETUP
+# =========================================
+echo -e "${YELLOW}🔧 Updating system packages...${NC}"
+sudo apt update -y
 
-# Download environment file
-echo -e "${YELLOW}Downloading environment file...${NC}"
+# Install Screen
+if ! command -v screen &> /dev/null; then
+    echo -e "${YELLOW}📦 Installing Screen...${NC}"
+    sudo apt install -y screen
+fi
+
+# Install Git
+if ! command -v git &> /dev/null; then
+    echo -e "${YELLOW}📦 Installing Git...${NC}"
+    sudo apt install -y git
+fi
+
+# Install Docker
+if ! command -v docker &> /dev/null; then
+    echo -e "${YELLOW}🐳 Installing Docker and dependencies...${NC}"
+    sudo apt install -y apt-transport-https ca-certificates curl software-properties-common lsb-release gnupg2
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    sudo apt update -y
+    sudo apt install -y docker-ce docker-ce-cli containerd.io
+fi
+
+# Install Docker Compose
+if ! command -v docker-compose &> /dev/null; then
+    echo -e "${YELLOW}📦 Installing Docker Compose...${NC}"
+    VER=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep tag_name | cut -d '"' -f 4)
+    sudo curl -L "https://github.com/docker/compose/releases/download/$VER/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    sudo chmod +x /usr/local/bin/docker-compose
+fi
+
+# Add user to docker group
+if ! groups $USER | grep -q '\bdocker\b'; then
+    echo -e "${YELLOW}➕ Adding user to docker group...${NC}"
+    sudo usermod -aG docker $USER
+    echo -e "${YELLOW}⚠️  Please log out and log back in to activate Docker group changes.${NC}"
+fi
+
+# =========================================
+# MAIN WORKFLOW
+# =========================================
+# Pull Docker image
+echo -e "${YELLOW}📥 Pulling Docker image: rohan014233/0g-da-client...${NC}"
+docker pull rohan014233/0g-da-client
+
+# Download env template
+echo -e "${YELLOW}🌐 Downloading env file template...${NC}"
 wget -q -O "./0genvfile.env" https://raw.githubusercontent.com/CryptonodesHindi/Automated_script/refs/heads/main/0genvfile.env
 
-# Inject private key into the environment file
+# Inject private key
+echo -e "${YELLOW}✍️ Injecting private key into env file...${NC}"
 sed -i "s|COMBINED_SERVER_PRIVATE_KEY=YOUR_PRIVATE_KEY|COMBINED_SERVER_PRIVATE_KEY=$YOUR_PRIVATE_KEY|" "./0genvfile.env"
 
 # Run Docker container
-echo -e "${YELLOW}Starting Docker container...${NC}"
+echo -e "${YELLOW}🚀 Starting Docker container...${NC}"
 docker run -d --env-file ./0genvfile.env --name 0g-da-client -v ./run:/runtime -p 51001:51001 rohan014233/0g-da-client combined
 
-# Display completion message
-echo "========================================"
-echo -e "${YELLOW}Thanks for using the script!${NC}"
-echo "========================================"
+# Done
+echo -e "${GREEN}🎉 All set! 0G DA client is now running in Docker container!${NC}"

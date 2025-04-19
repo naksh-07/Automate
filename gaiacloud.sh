@@ -8,7 +8,7 @@ ARCHIVE_NAME="gaianet.7z"
 DESTINATION="/root"
 
 # Use ZIPPASSWORD from environment (set as secret in Codespaces)
-if [[ -z "$ZIPPASSWORD" ]]; then
+if [[ -z "$ZIP_PASSWORD" ]]; then
   echo "ERROR: ZIPPASSWORD environment variable is not set."
   exit 1
 fi
@@ -19,7 +19,7 @@ mega-get "$ARCHIVE_NAME"
 
 # Step 2: Extract to /root with password from secret
 echo "Extracting $ARCHIVE_NAME to $DESTINATION..."
-7z x "$ARCHIVE_NAME" -p"$ZIPPASSWORD" -o"$DESTINATION"
+7z x "$ARCHIVE_NAME" -p"$ZIP_PASSWORD" -o"$DESTINATION"
 
 # Step 3: Source ~/.bashrc
 echo "Sourcing ~/.bashrc..."

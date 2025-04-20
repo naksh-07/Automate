@@ -1,19 +1,14 @@
 #!/bin/bash
 
-# Source .bashrc to load environment variables and paths
-source ~/.bashrc
+# Add gaianet bin path to PATH
+export PATH="/root/gaianet/bin:$PATH"
 
-# Optional: echo PATH to check if sourced correctly
-# echo "PATH: $PATH"
+echo "🚀 Restarting gaianet..."
 
-# Wait 2 seconds
 sleep 2
-
-# Stop the service
 gaianet stop
 
-# Wait 7 more seconds
 sleep 7
-
-# Start the service
 gaianet start
+
+echo "✅ Gaia restart complete!"

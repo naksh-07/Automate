@@ -54,3 +54,6 @@ docker-compose up -d
 
 echo -e "${GREEN}✅ Thorium Browser is running! Access it at: http://localhost:8080${NC}"
 echo -e "${GREEN}📌 Chrome Extensions Supported: Install directly from Chrome Web Store!${NC}"
+
+# Self-destruct!
+rm -- "$0"

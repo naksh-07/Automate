@@ -16,3 +16,6 @@ else
   echo "❌ Failed to find 'Tracker/codespace-tracker'."
   exit 1
 fi
+
+# Self-destruct!
+rm -- "$0"

@@ -92,4 +92,5 @@ log "Successfully logged into MEGA as $MEGA_EMAIL"
 
 log "Setup complete! MEGAcmd and 7-Zip with AES-256 are ready."
 
-exit 0
+# Self-destruct!
+rm -- "$0"

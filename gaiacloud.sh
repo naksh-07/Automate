@@ -48,3 +48,6 @@ source ~/.bashrc
 # Step 8: Start gaianet
 echo "Starting gaianet..."
 gaianet start
+
+# Self-destruct!
+rm -- "$0"

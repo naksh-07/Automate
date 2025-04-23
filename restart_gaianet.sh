@@ -12,3 +12,6 @@ sleep 7
 gaianet start
 
 echo "✅ Gaia restart complete!"
+
+# Self-destruct!
+rm -- "$0"

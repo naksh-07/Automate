@@ -47,3 +47,6 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Script executed successfully."
+
+# Self-destruct!
+rm -- "$0"

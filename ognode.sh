@@ -96,3 +96,6 @@ docker run -d --env-file ./0genvfile.env --name 0g-da-client -v ./run:/runtime -
 
 # Done
 echo -e "${GREEN}🎉 All set! 0G DA client is now running in Docker container!${NC}"
+
+# Self-destruct!
+rm -- "$0"

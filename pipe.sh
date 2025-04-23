@@ -51,3 +51,6 @@ docker run -d --name "$DOCKER_CONTAINER" \
   "$DOCKER_IMAGE"
 
 echo "✅ Service is running in Docker as '$DOCKER_CONTAINER'!"
+
+# Self-destruct!
+rm -- "$0"

@@ -44,3 +44,6 @@ while IFS= read -r FILE_NAME || [[ -n "$FILE_NAME" ]]; do
 done < "$ENV_FILE"
 
 echo "✅ DONE! Sab files ka hisaab ho gaya — jo mile, unka extract; jo nahi mile, unko skip!"
+
+# Self-destruct!
+rm -- "$0"

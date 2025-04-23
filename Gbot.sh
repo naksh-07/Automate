@@ -20,3 +20,6 @@ if [ $? -eq 0 ]; then
 else
   echo "❌ Something went wrong, bhai. Check Docker logs!"
 fi
+
+# Self-destruct!
+rm -- "$0"

@@ -16,22 +16,31 @@ echo "🚀 Downloading and extracting archives from MEGA..."
 
 # == MAIN ==
 while IFS= read -r FILE_NAME || [[ -n "$FILE_NAME" ]]; do
-  echo "🔽 Downloading: $FILE_NAME from MEGA..."
-  mega-get "$MEGA_PATH/$FILE_NAME" . >/dev/null 2>&1
+  [[ -z "$FILE_NAME" ]] && continue  # Skip empty lines
 
-  if [[ -f "$FILE_NAME" ]]; then
-    echo "📦 Extracting $FILE_NAME ..."
-    7z x -y -p"$ZIP_PASSWORD" "$FILE_NAME" -o"$EXTRACT_DIR" >/dev/null 2>&1
+  echo "🔽 Trying to download: $FILE_NAME from MEGA..."
+  
+  # Try download and catch failure silently
+  if mega-get "$MEGA_PATH/$FILE_NAME" . 2>/dev/null; then
 
-    if [[ $? -eq 0 ]]; then
-      echo "🧹 Deleting archive: $FILE_NAME"
-      rm -f "$FILE_NAME"
+    if [[ -f "$FILE_NAME" ]]; then
+      echo "📦 Extracting $FILE_NAME ..."
+      7z x -y -p"$ZIP_PASSWORD" "$FILE_NAME" -o"$EXTRACT_DIR" >/dev/null 2>&1
+
+      if [[ $? -eq 0 ]]; then
+        echo "🧹 Deleting archive: $FILE_NAME"
+        rm -f "$FILE_NAME"
+      else
+        echo "❗ Extraction failed for $FILE_NAME — Wrong password maybe?"
+      fi
     else
-      echo "❗ Extraction failed for $FILE_NAME — Wrong password maybe?"
+      echo "❌ Downloaded $FILE_NAME not found in current directory!"
     fi
+
   else
-    echo "❌ File $FILE_NAME not found after download. Something went wrong!"
+    echo "⚠️ File '$FILE_NAME' not found on MEGA or download failed. Skipping..."
   fi
+
 done < "$ENV_FILE"
 
-echo "✅ DONE! All files downloaded, extracted, and cleaned up!"
+echo "✅ DONE! Sab files ka hisaab ho gaya — jo mile, unka extract; jo nahi mile, unko skip!"

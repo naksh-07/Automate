@@ -7,6 +7,15 @@ MEGA_URL="https://mega.nz/linux/repo/xUbuntu_22.04/amd64/megacmd-xUbuntu_22.04_a
 DEB_FILE="megacmd-xUbuntu_22.04_amd64.deb"
 LOGFILE="/var/log/megacmd_install.log"
 
+# 1) Load credentials
+if [[ -f mega.env ]]; then
+  # echo "Loading MEGA creds..."
+  source mega.env
+else
+  echo "❌ mega.env not found! Run gen_mega_env.sh first."
+  exit 1
+fi
+
 log() {
     echo -e "$(date '+%Y-%m-%d %H:%M:%S') - $1" | tee -a "$LOGFILE"
 }

@@ -2,9 +2,17 @@
 
 # == CONFIG ==
 ENV_FILE="down.env"
-ZIP_PASSWORD="${ZIP_PASSWORD:?ZIP_PASSWORD not set in Codespace secrets}"
 MEGA_PATH="/"
 EXTRACT_DIR="$(pwd)"
+
+# 1) Load credentials
+if [[ -f mega.env ]]; then
+  # echo "Loading MEGA creds..."
+  source mega.env
+else
+  echo "❌ mega.env not found! Run gen_mega_env.sh first."
+  exit 1
+fi
 
 # == CHECK ==
 if [[ ! -f "$ENV_FILE" ]]; then

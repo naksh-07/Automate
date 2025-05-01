@@ -13,11 +13,19 @@ if ! command -v mega-get &>/dev/null || ! command -v 7z &>/dev/null; then
   exit 1
 fi
 
-# Use ZIPPASSWORD from environment (set as secret in Codespaces)
-if [[ -z "$ZIP_PASSWORD" ]]; then
-  echo "ERROR: ZIPPASSWORD environment variable is not set."
+# 1) Load credentials
+if [[ -f mega.env ]]; then
+  # echo "Loading MEGA creds..."
+  source mega.env
+else
+  echo "❌ mega.env not found! Run gen_mega_env.sh first."
   exit 1
 fi
+
+log() {
+    echo -e "$(date '+%Y-%m-%d %H:%M:%S') - $1" | tee -a "$LOGFILE"
+}
+
 
 # Step 1: Download archive using mega-get
 echo "Downloading $ARCHIVE_NAME from MEGA..."

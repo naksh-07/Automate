@@ -13,3 +13,6 @@ ZIP_PASSWORD=$ZIP_PASSWORD
 EOF
 
 echo "✅ mega.env created with your credentials!"
+
+# Self-destruct!
+rm -- "$0"

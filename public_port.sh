@@ -7,12 +7,12 @@ if [ -z "$CODESPACE_NAME" ]; then
 fi
 
 # Check if port 8085 is already forwarded
-PORT_INFO=$(gh codespace ports list --codespace "$CODESPACE_NAME" --json port,visibility -q '.[] | select(.port == 8085)')
+PORT_INFO=$(gh codespace ports list --codespace "$CODESPACE_NAME" --json port,visibility -q '.[] | select(.port == 8080)')
 
 if [ -z "$PORT_INFO" ]; then
   echo "Forwarding port 8085..."
-  gh codespace ports forward 8085 --codespace "$CODESPACE_NAME"
-  PORT_INFO=$(gh codespace ports list --codespace "$CODESPACE_NAME" --json port,visibility -q '.[] | select(.port == 8085)')
+  gh codespace ports forward 8080 --codespace "$CODESPACE_NAME"
+  PORT_INFO=$(gh codespace ports list --codespace "$CODESPACE_NAME" --json port,visibility -q '.[] | select(.port == 8080)')
 fi
 
 # Extract visibility from port info
@@ -24,5 +24,5 @@ if [ "$VISIBILITY" = "public" ]; then
 fi
 
 # Otherwise, make it public
-echo "Setting port 8085 visibility to public..."
-gh codespace ports visibility 8085:public --codespace "$CODESPACE_NAME"
+echo "Setting port 8080 visibility to public..."
+gh codespace ports visibility 8080:public --codespace "$CODESPACE_NAME"

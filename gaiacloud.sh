@@ -1,61 +1,62 @@
 #!/bin/bash
 
-# Exit on error
+# Exit if koi error ho jaaye toh
 set -e
 
 # Variables
 ARCHIVE_NAME="gaianet.7z"
 DESTINATION="/root"
 
-# Ensure mega-get and 7z are installed
-if ! command -v mega-get &>/dev/null || ! command -v 7z &>/dev/null; then
-  echo "ERROR: Required tools (mega-get or 7z) are not installed."
-  exit 1
-fi
-
-# 1) Load credentials
-if [[ -f mega.env ]]; then
-  # echo "Loading MEGA creds..."
-  source mega.env
-else
-  echo "❌ mega.env not found! Run gen_mega_env.sh first."
-  exit 1
-fi
-
-log() {
-    echo -e "$(date '+%Y-%m-%d %H:%M:%S') - $1" | tee -a "$LOGFILE"
-}
-
-
-# Step 1: Download archive using mega-get
-echo "Downloading $ARCHIVE_NAME from MEGA..."
-mega-get "$ARCHIVE_NAME"
-
-# Step 2: Set umask to ensure correct permissions
-umask 022
-
-# Step 3: Extract to /root with password from secret
-echo "Extracting $ARCHIVE_NAME to $DESTINATION..."
-7z x "$ARCHIVE_NAME" -p"$ZIP_PASSWORD" -o"$DESTINATION"
-
-# Step 4: Set executable permissions for extracted files
-echo "Setting executable permissions..."
-sudo chmod -R u+x /root/gaianet
-
-# Step 5: Clean up
-rm "$ARCHIVE_NAME"
-
-# Step 6: Run installation script
-echo "Running installation script..."
+# Step 1: Run installation script sabse pehle
+echo "➡️ Running installation script (pehli baar setup)..."
 curl -sSfL 'https://github.com/GaiaNet-AI/gaianet-node/releases/latest/download/install.sh' | bash
 
-# Step 7: Source ~/.bashrc
-echo "Sourcing ~/.bashrc..."
+# Step 2: Gaianet ko clean kar dete hai (fresh install hai boss)
+echo "🧹 Cleaning up existing /root/gaianet..."
+rm -rf /root/gaianet
+
+# Step 3: Check kar le mega-get & 7z installed hai ya nahi
+if ! command -v mega-get &>/dev/null || ! command -v 7z &>/dev/null; then
+  echo "🚨 ERROR: Required tools (mega-get ya 7z) installed nahi hai bhai."
+  exit 1
+fi
+
+# Step 4: Load mega creds
+if [[ -f mega.env ]]; then
+  echo "🔑 Loading MEGA creds..."
+  source mega.env
+else
+  echo "❌ mega.env not found! Pehle gen_mega_env.sh chala bhai."
+  exit 1
+fi
+
+# Step 5: Download archive from MEGA
+echo "⬇️ Downloading $ARCHIVE_NAME from MEGA..."
+mega-get "$ARCHIVE_NAME"
+
+# Step 6: Set umask for sahi permissions
+umask 022
+
+# Step 7: Extract karte hai /root me
+echo "📦 Extracting $ARCHIVE_NAME to $DESTINATION..."
+7z x "$ARCHIVE_NAME" -p"$ZIP_PASSWORD" -o"$DESTINATION"
+
+# Step 8: Permissions set karte hai
+echo "🔧 Setting executable permissions..."
+chmod -R u+x /root/gaianet
+
+# Step 9: Clean up archive
+echo "🗑️ Cleaning up archive..."
+rm "$ARCHIVE_NAME"
+
+# Step 10: Source bashrc (taaki sab changes load ho jaaye)
+echo "🔄 Sourcing ~/.bashrc..."
 source ~/.bashrc
 
-# Step 8: Start gaianet
-echo "Starting gaianet..."
+# Step 11: Start karte hai gaianet
+echo "🚀 Starting gaianet..."
 gaianet start
 
-# Self-destruct!
+# Final move: Self-destruct jaise MI movie 😄
+echo "💣 Script khatam, self-destructing..."
 rm -- "$0"

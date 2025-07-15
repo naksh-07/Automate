@@ -35,6 +35,10 @@ fi
 
 # Run the container
 echo "🐳 Running Docker container with node-id: $NODE_ID"
-docker run -dit --network host --name nexus-node rohan014233/nexus-image nexus-network start --node-id "$NODE_ID"
+docker run -dit \
+  --name nexus-node \
+  --network host \
+  rohan014233/nexus-image \
+  --node-id "$NODE_ID"
 
 echo "🎉 Nexus node launched successfully with ID: $NODE_ID"

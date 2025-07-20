@@ -39,6 +39,7 @@ docker run -dit \
   --name nexus-node \
   --network host \
   rohan014233/nexus-image \
-  --node-id "$NODE_ID"
+  start --node-id "$NODE_ID"
+
 
 echo "🎉 Nexus node launched successfully with ID: $NODE_ID"
